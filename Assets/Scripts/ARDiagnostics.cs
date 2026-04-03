@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Vuforia;
 using TMPro;
 using UnityEngine.EventSystems;
@@ -7,74 +7,76 @@ using UnityEngine.InputSystem;
 
 public class ARDiagnostics : MonoBehaviour
 {
+    [SerializeField] private bool enableDiagnostics = false;
+
     private TextMeshProUGUI debugText;
-    private int tapCount = 0;
+    private int tapCount;
 
-    void Start()
+    private void Start()
     {
-        // 1. REPARACIÓN AUTOMÁTICA DEL INPUT SYSTEM (SIN TOCAR LA ESCENA)
-        FixEventSystem();
+        if (!enableDiagnostics)
+        {
+            enabled = false;
+            return;
+        }
 
-        // 2. BUSCAR O CREAR CANVAS DE DEBUG
+        FixEventSystem();
         SetupDebugUI();
     }
 
-    void FixEventSystem()
+    private void FixEventSystem()
     {
         var es = Object.FindFirstObjectByType<EventSystem>();
-        if (es != null)
-        {
-            var old = es.GetComponent<StandaloneInputModule>();
-            if (old != null)
-            {
-                Destroy(old);
-                es.gameObject.AddComponent<InputSystemUIInputModule>();
-                Debug.Log("[ARDiagnostics] EventSystem corregido a InputSystemUIInputModule.");
-            }
-        }
+        if (es == null)
+            return;
+
+        var old = es.GetComponent<StandaloneInputModule>();
+        if (old == null)
+            return;
+
+        Destroy(old);
+        es.gameObject.AddComponent<InputSystemUIInputModule>();
+        Debug.Log("[ARDiagnostics] EventSystem switched to InputSystemUIInputModule.");
     }
 
-    void SetupDebugUI()
+    private void SetupDebugUI()
     {
         var canvas = GameObject.Find("AR_Canvas");
         if (canvas == null)
         {
-            GameObject canvasGO = new GameObject("DebugCanvas", typeof(Canvas), typeof(UnityEngine.UI.CanvasScaler));
+            var canvasGO = new GameObject("DebugCanvas", typeof(Canvas), typeof(UnityEngine.UI.CanvasScaler));
             canvas = canvasGO;
             canvasGO.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
         }
 
-        GameObject debugGO = new GameObject("DebugText", typeof(RectTransform));
-        debugGO.transform.SetParent(canvas.transform);
+        var debugGO = new GameObject("DebugText", typeof(RectTransform));
+        debugGO.transform.SetParent(canvas.transform, false);
         debugText = debugGO.AddComponent<TextMeshProUGUI>();
-        
+
         debugText.fontSize = 24;
         debugText.color = Color.yellow;
         debugText.alignment = TextAlignmentOptions.BottomLeft;
-        
-        RectTransform rt = debugText.GetComponent<RectTransform>();
-        rt.anchorMin = rt.anchorMax = rt.pivot = Vector2.zero;
+
+        var rt = debugText.GetComponent<RectTransform>();
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.zero;
+        rt.pivot = Vector2.zero;
         rt.anchoredPosition = new Vector2(20, 20);
         rt.sizeDelta = new Vector2(600, 100);
     }
 
-    void Update()
+    private void Update()
     {
-        if (debugText == null) return;
+        if (debugText == null)
+            return;
 
-        // VERIFICAR ESTADO DE RASTREO
-        var status = "Iniciando...";
+        var status = "Starting...";
         if (VuforiaBehaviour.Instance != null)
-        {
-            status = VuforiaBehaviour.Instance.enabled ? "Cámara AR Activa" : "Desactivado";
-        }
+            status = VuforiaBehaviour.Instance.enabled ? "AR Camera Active" : "Disabled";
 
-        // VERIFICAR TOQUES
         if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
-        {
             tapCount++;
-        }
 
-        debugText.text = $"Estado: {status}\nToques Detectados: {tapCount}\nDispositivo: {SystemInfo.deviceModel}";
+        debugText.text = $"State: {status}\nTaps: {tapCount}\nDevice: {SystemInfo.deviceModel}";
     }
 }

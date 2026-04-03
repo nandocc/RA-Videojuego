@@ -1903,6 +1903,65 @@ MonoBehaviour:
   speed: 1.45
   turnSpeed: 6.2
   reachDistance: 0.2
+--- !u!1 &632266873
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 632266875}
+  - component: {fileID: 632266874}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &632266874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 632266873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4bf69b53ed194e963da71be887a3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  backgroundLoop: {fileID: 8300000, guid: 341d581682d73644797830ac8b9681ba, type: 3}
+  shot: {fileID: 8300000, guid: 76b416d7c3259c14f983ebee5b263ee5, type: 3}
+  asteroidDestroy: {fileID: 8300000, guid: 70f0312dad73fb04583673301649184a, type: 3}
+  shipDestroy: {fileID: 8300000, guid: e322733909b1fd74f8f320d7bb828742, type: 3}
+  playerHit: {fileID: 8300000, guid: 52b0eb4290414334783ab9489ec0565b, type: 3}
+  playerDeath: {fileID: 8300000, guid: 04e7d69480ab1254bb0273b051dae249, type: 3}
+  victory: {fileID: 8300000, guid: 97590bc26f79270419b75d2b033e242e, type: 3}
+  musicVolume: 0.3
+  shotVolume: 0.5
+  asteroidDestroyVolume: 0.8
+  shipDestroyVolume: 0.8
+  playerHitVolume: 0.8
+  playerDeathVolume: 1
+  victoryVolume: 1
+  playerHitMinInterval: 0.12
+--- !u!4 &632266875
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 632266873}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 532.9237, y: 0.00005, z: 198.9879}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &656754311 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100000, guid: 614d5d16c663aaf4e8a724ee026d8cf0,
@@ -2831,6 +2890,7 @@ GameObject:
   - component: {fileID: 1006951565}
   - component: {fileID: 1006951568}
   - component: {fileID: 1006951567}
+  - component: {fileID: 1006951569}
   m_Layer: 0
   m_Name: ARCamera
   m_TagString: MainCamera
@@ -3077,6 +3137,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHealth: 100
   currentHealth: 100
+--- !u!81 &1006951569
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1006951558}
+  m_Enabled: 1
 --- !u!1001 &1028781574
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7281,6 +7349,7 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 632266875}
   - {fileID: 1471547012}
   - {fileID: 1075000276}
   - {fileID: 762360393}

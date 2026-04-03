@@ -75,9 +75,8 @@ public class ProjectileShooter : MonoBehaviour
         if (arCamera == null)
             return;
 
-        var ray = arCamera.ScreenPointToRay(screenPosition);
-        var direction = ray.direction.normalized;
         var spawn = GetProjectileSpawnPosition();
+        var direction = ComputeShotDirection(screenPosition, spawn);
 
         var go = CreateProjectileVisual(spawn, direction);
 
@@ -95,6 +94,23 @@ public class ProjectileShooter : MonoBehaviour
         IgnoreCollisionWithCannon(go);
         IgnoreCollisionWithCamera(go);
         SpawnMuzzleFlash(spawn);
+
+        AudioManager.Instance?.PlayShot();
+    }
+
+    private Vector3 ComputeShotDirection(Vector2 screenPosition, Vector3 spawn)
+    {
+        var ray = arCamera.ScreenPointToRay(screenPosition);
+        var aimPoint = ray.origin + ray.direction * 40f;
+
+        if (Physics.Raycast(ray, out var hit, 120f, ~0, QueryTriggerInteraction.Collide))
+            aimPoint = hit.point;
+
+        var direction = (aimPoint - spawn).normalized;
+        if (direction.sqrMagnitude < 0.0001f)
+            direction = ray.direction.normalized;
+
+        return direction;
     }
 
     private Vector3 GetProjectileSpawnPosition()
@@ -123,6 +139,7 @@ public class ProjectileShooter : MonoBehaviour
             if (existingMuzzle != null)
                 muzzlePoint = existingMuzzle;
             ApplyCannonPose(cannonRoot);
+            DisableCannonColliders(cannonRoot);
             return;
         }
 
@@ -132,6 +149,7 @@ public class ProjectileShooter : MonoBehaviour
             visual.name = "FPCannonRoot";
             ApplyCannonPose(visual.transform);
             cannonRoot = visual.transform;
+            DisableCannonColliders(cannonRoot);
 
             var muzzleExisting = cannonRoot.Find("MuzzlePoint");
             if (muzzleExisting != null)
@@ -189,6 +207,7 @@ public class ProjectileShooter : MonoBehaviour
         cannonRoot = root;
         muzzlePoint = muzzle;
         ApplyCannonPose(cannonRoot);
+        DisableCannonColliders(cannonRoot);
     }
 
     private void ApplyCannonPose(Transform targetRoot)
@@ -298,6 +317,16 @@ public class ProjectileShooter : MonoBehaviour
             return;
 
         renderer.material.color = color;
+    }
+
+    private static void DisableCannonColliders(Transform root)
+    {
+        if (root == null)
+            return;
+
+        var colliders = root.GetComponentsInChildren<Collider>(true);
+        for (var i = 0; i < colliders.Length; i++)
+            colliders[i].enabled = false;
     }
 
     private static bool TryGetShootInput(out Vector2 screenPosition, out int pointerId)

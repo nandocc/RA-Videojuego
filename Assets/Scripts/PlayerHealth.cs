@@ -25,12 +25,20 @@ public class PlayerHealth : MonoBehaviour
         if (IsDead)
             return;
 
+        var previousHealth = currentHealth;
         currentHealth -= Mathf.Max(0f, damage);
         currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+
+        if (currentHealth < previousHealth && currentHealth > 0f)
+            AudioManager.Instance?.PlayPlayerHit();
+
         NotifyHealthChanged();
 
         if (currentHealth <= 0f)
+        {
+            AudioManager.Instance?.PlayPlayerDeath();
             OnPlayerDied?.Invoke();
+        }
     }
 
     public void ResetHealth()

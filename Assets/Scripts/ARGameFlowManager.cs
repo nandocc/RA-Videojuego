@@ -51,6 +51,9 @@ public class ARGameFlowManager : MonoBehaviour
     private GUIStyle _buttonStyle;
     private GUIStyle _reticleStyle;
     private Texture2D _whiteTex;
+    private float _uiScale = 1f;
+    private int _cachedScreenWidth;
+    private int _cachedScreenHeight;
     private readonly GUIContent _playerLabelContent = new();
     private readonly GUIContent _introContent = new();
     private readonly GUIContent _timerContent = new();
@@ -189,16 +192,21 @@ public class ARGameFlowManager : MonoBehaviour
         if (_labelStyle != null)
             return;
 
+        // Scale by short side so portrait/landscape keep similar proportions.
+        var shortSide = Mathf.Min(Screen.width, Screen.height);
+        var scale = Mathf.Clamp(shortSide / 720f, 0.95f, 1.65f);
+        _uiScale = scale;
+
         _labelStyle = new GUIStyle(GUI.skin.label)
         {
-            fontSize = 28,
+            fontSize = Mathf.RoundToInt(28 * scale),
             alignment = TextAnchor.UpperLeft,
             normal = { textColor = Color.white }
         };
 
         _panelStyle = new GUIStyle(GUI.skin.box)
         {
-            fontSize = 30,
+            fontSize = Mathf.RoundToInt(30 * scale),
             alignment = TextAnchor.MiddleCenter,
             normal = { textColor = Color.white },
             wordWrap = true
@@ -206,12 +214,12 @@ public class ARGameFlowManager : MonoBehaviour
 
         _buttonStyle = new GUIStyle(GUI.skin.button)
         {
-            fontSize = 28
+            fontSize = Mathf.RoundToInt(28 * scale)
         };
 
         _reticleStyle = new GUIStyle(GUI.skin.label)
         {
-            fontSize = 42,
+            fontSize = Mathf.RoundToInt(42 * scale),
             alignment = TextAnchor.MiddleCenter,
             normal = { textColor = Color.cyan }
         };
@@ -297,6 +305,16 @@ public class ARGameFlowManager : MonoBehaviour
 
     private void OnGUI()
     {
+        if (_cachedScreenWidth != Screen.width || _cachedScreenHeight != Screen.height)
+        {
+            _labelStyle = null;
+            _panelStyle = null;
+            _buttonStyle = null;
+            _reticleStyle = null;
+            _cachedScreenWidth = Screen.width;
+            _cachedScreenHeight = Screen.height;
+        }
+
         InitStyles();
 
         var pad = 20f;
@@ -316,21 +334,21 @@ public class ARGameFlowManager : MonoBehaviour
             var remaining = Mathf.Max(0f, _gameEndTime - Time.time);
             var timerText = $"Tiempo: {Mathf.CeilToInt(remaining)}s";
             _timerContent.text = timerText;
-            GUI.Label(new Rect(Screen.width * 0.5f - 160f, 24f, 320f, 40f), _timerContent, _panelStyle);
+            GUI.Label(new Rect(Screen.width * 0.5f - 200f, 100f, 400f, 50f), _timerContent, _panelStyle);
         }
 
         if (_gameStarted && !_gameOver && !_asteroidThreatStarted && asteroidSpawner != null)
         {
             var remaining = Mathf.Max(0f, _asteroidCountdownEndTime - Time.time);
             var text = $"Asteroides en: {Mathf.CeilToInt(remaining)}s";
-            GUI.Label(new Rect(Screen.width * 0.5f - 170f, 100f, 340f, 50f), text, _panelStyle);
+            GUI.Label(new Rect(Screen.width * 0.5f - 200f, 200f, 400f, 50f), text, _panelStyle);
         }
 
         if (_gameStarted && !_gameOver && !_gameCompleted && Time.time < _introEndTime)
         {
             var t = Mathf.CeilToInt(_introEndTime - Time.time);
             _introContent.text = $"Sobrevive a los asteroides y dispara a los enemigos ({t})";
-            GUI.Label(new Rect(30f, 150f, Screen.width - 60f, 90f), _introContent, _panelStyle);
+            GUI.Label(new Rect(30f, 300f, Screen.width - 60f, 70f), _introContent, _panelStyle);
         }
 
         if (_gameStarted || !requireSurfacePlacement)
@@ -425,29 +443,29 @@ public class ARGameFlowManager : MonoBehaviour
 
     private void DrawGameOverPanel()
     {
-        var w = Mathf.Min(680, Screen.width - 80);
-        var h = 220f;
+        var w = Mathf.Min(760f * _uiScale, Screen.width - 80);
+        var h = 260f * _uiScale;
         var x = (Screen.width - w) * 0.5f;
         var y = (Screen.height - h) * 0.5f;
         GUI.Box(new Rect(x, y, w, h), string.Empty, _panelStyle);
-        GUI.Label(new Rect(x + 20, y + 20, w - 40, 80), "GAME OVER\nTu nave fue destruida", _panelStyle);
-        GUI.Label(new Rect(x + 20, y + 120, w - 40, 40), $"Puntaje final: {_score}", _panelStyle);
+        GUI.Label(new Rect(x + 24, y + 22, w - 48, 100f * _uiScale), "GAME OVER\nTu nave fue destruida", _panelStyle);
+        GUI.Label(new Rect(x + 24, y + 130f * _uiScale, w - 48, 44f * _uiScale), $"Puntaje final: {_score}", _panelStyle);
 
-        if (GUI.Button(new Rect(x + 40, y + h - 70, w - 80, 50), "Volver a Jugar", _buttonStyle))
+        if (GUI.Button(new Rect(x + 40, y + h - (82f * _uiScale), w - 80, 56f * _uiScale), "Volver a Jugar", _buttonStyle))
             RestartGame();
     }
 
     private void DrawCompletedPanel()
     {
-        var w = Mathf.Min(680, Screen.width - 80);
-        var h = 220f;
+        var w = Mathf.Min(760f * _uiScale, Screen.width - 80);
+        var h = 260f * _uiScale;
         var x = (Screen.width - w) * 0.5f;
         var y = (Screen.height - h) * 0.5f;
         GUI.Box(new Rect(x, y, w, h), string.Empty, _panelStyle);
-        GUI.Label(new Rect(x + 20, y + 20, w - 40, 80), "Juego Completado\nSobreviviste 1 minuto", _panelStyle);
-        GUI.Label(new Rect(x + 20, y + 120, w - 40, 40), $"Puntaje final: {_score}", _panelStyle);
+        GUI.Label(new Rect(x + 24, y + 22, w - 48, 100f * _uiScale), "Juego Completado\nSobreviviste 1 minuto", _panelStyle);
+        GUI.Label(new Rect(x + 24, y + 130f * _uiScale, w - 48, 44f * _uiScale), $"Puntaje final: {_score}", _panelStyle);
 
-        if (GUI.Button(new Rect(x + 40, y + h - 70, w - 80, 50), "Volver a Jugar", _buttonStyle))
+        if (GUI.Button(new Rect(x + 40, y + h - (82f * _uiScale), w - 80, 56f * _uiScale), "Volver a Jugar", _buttonStyle))
             RestartGame();
     }
 
@@ -474,6 +492,7 @@ public class ARGameFlowManager : MonoBehaviour
             _gameCompleted = true;
             AsteroidThreatActive = false;
             SetGameplayEnabled(false);
+            AudioManager.Instance?.PlayVictory();
         }
     }
 

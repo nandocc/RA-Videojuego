@@ -32,6 +32,10 @@ public class ShipHealth : MonoBehaviour
             return;
 
         _isDead = true;
+        if (GetComponent<AsteroidHazard>() != null)
+            AudioManager.Instance?.PlayAsteroidDestroy();
+        else
+            AudioManager.Instance?.PlayShipDestroy();
         ShipDestroyed?.Invoke(this, scoreValue);
         if (destroyOnDeath)
             Destroy(gameObject);
