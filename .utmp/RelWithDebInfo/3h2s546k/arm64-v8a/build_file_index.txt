@@ -1,0 +1,2 @@
+C:\Users\nando\Documents\Videojuegos\Videojuego con RA\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\CMakeLists.txt
+C:\Users\nando\Documents\Videojuegos\Videojuego con RA\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\GameActivity\CMakeLists.txt

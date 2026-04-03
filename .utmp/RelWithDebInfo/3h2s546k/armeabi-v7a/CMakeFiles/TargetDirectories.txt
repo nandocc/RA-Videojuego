@@ -1,0 +1,5 @@
+C:/Users/nando/Documents/Videojuegos/Videojuego con RA/.utmp/RelWithDebInfo/3h2s546k/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/nando/Documents/Videojuegos/Videojuego con RA/.utmp/RelWithDebInfo/3h2s546k/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+C:/Users/nando/Documents/Videojuegos/Videojuego con RA/.utmp/RelWithDebInfo/3h2s546k/armeabi-v7a/GameActivity/CMakeFiles/game.dir
+C:/Users/nando/Documents/Videojuegos/Videojuego con RA/.utmp/RelWithDebInfo/3h2s546k/armeabi-v7a/GameActivity/CMakeFiles/edit_cache.dir
+C:/Users/nando/Documents/Videojuegos/Videojuego con RA/.utmp/RelWithDebInfo/3h2s546k/armeabi-v7a/GameActivity/CMakeFiles/rebuild_cache.dir
